@@ -9,7 +9,7 @@ API_KEY = os.getenv("OPENWEATHER_API_KEY")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 
-
+#테스트
 
 # 한글 도시명과 영문 도시명 매핑
 city_name_map = {

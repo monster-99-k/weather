@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 from dotenv import load_dotenv
 import os
+from streamlit_js_eval import streamlit_js_eval
 
 load_dotenv()
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
@@ -243,6 +244,30 @@ if my_city_eng:
         st.write(f"💧 습도: {data['main']['humidity']}% | 🌬️ 풍속: {data['wind']['speed']} m/s")
     else:
         st.write("내 위치의 날씨 정보를 가져올 수 없습니다.")
+
+# GPS 기반 내 위치(위도, 경도) 가져오기
+coords = streamlit_js_eval(js_expressions="getCurrentPosition", key="get_gps")
+user_lat, user_lon = None, None
+if coords and coords.get("coords"):
+    user_lat = coords["coords"]["latitude"]
+    user_lon = coords["coords"]["longitude"]
+    st.success(f"내 위치(GPS): {user_lat}, {user_lon}")
+    # GPS 기반 날씨 정보 표시
+    if user_lat and user_lon:
+        response = get_forecast_by_latlon(user_lat, user_lon)
+        if response.status_code == 200:
+            data = response.json()
+            # 현재 날씨 정보 추출
+            if "list" in data and len(data["list"]) > 0:
+                weather = data["list"][0]
+                temp = weather["main"]["temp"]
+                desc = weather["weather"][0]["description"]
+                st.markdown("<div style='margin-bottom:1em;'></div>", unsafe_allow_html=True)
+                st.subheader("📍 내 위치(GPS) 날씨 정보")
+                st.write(f"🌡️ <span style='color:#1976d2'><b>{temp}°C</b></span>", unsafe_allow_html=True)
+                st.write(f"☁️ {desc}")
+        else:
+            st.error("GPS 기반 날씨 정보를 가져올 수 없습니다.")
 
 # 검색창 안내 문구를 위에 배치 (label 제거)
 st.markdown("<b>도시 이름을 한글로 입력하세요:</b>", unsafe_allow_html=True)

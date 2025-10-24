@@ -213,7 +213,7 @@ def get_weather_by_city(city_eng):
 def get_geo_by_city(city_eng):
     geo_url = "https://api.openweathermap.org/geo/1.0/direct"
     geo_params = {
-        "q": city_eng,
+        "q": f"{city_eng},KR",
         "limit": 1,
         "appid": API_KEY
     }

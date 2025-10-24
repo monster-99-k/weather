@@ -6,6 +6,8 @@ import os
 
 load_dotenv()
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
+if not API_KEY:
+    st.error("API 키가 설정되어 있지 않습니다. 환경 변수 또는 .env 파일을 확인하세요.")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 
